@@ -48,5 +48,11 @@ def CropImage(joints,im,Xlabel,Ylabel,cfg):
     joints[0,:,1]-=Xstart
     joints[0,:,2]-=Ystart
 
-    inbounds=np.where((joints[0,:,1]>0)*(joints[0,:,1]<np.shape(im)[1])*(joints[0,:,2]>0)*(joints[0,:,2]<np.shape(im)[0]))[0]
-    return joints[:,inbounds,:],im[Ystart:Ystop+1,Xstart:Xstop+1,:]
+#    inbounds=np.where((joints[0,:,1]>0)*(joints[0,:,1]<np.shape(im)[1])*(joints[0,:,2]>0)*(joints[0,:,2]<np.shape(im)[0]))[0]
+#    return joints[:,inbounds,:],im[Ystart:Ystop+1,Xstart:Xstop+1,:] - The output 'joints' will not have the same shape as input 'joint'. 
+#    This will create mismatched confidence maps across the training dataset and confuse the network during training.
+
+    inbounds= ((joints[0,:,1]>0)*(joints[0,:,1]<np.shape(im)[1])*(joints[0,:,2]>0)*(joints[0,:,2]<np.shape(im)[0])) 
+    joints[:,~inbounds,:] = np.nan #replace outbound values with nan just as if the joint is not labeled.  
+    return joints,im[Ystart:Ystop+1,Xstart:Xstop+1,:] 
+
